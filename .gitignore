@@ -1,0 +1,4 @@
+# Ignore Pi-hole generated files
+etc-pihole/*
+etc-dnsmasq.d/*
+!.gitignore

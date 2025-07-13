@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      TZ: "America/New_York"
+      WEBPASSWORD: "YourPasswordHere"
+    volumes:
+      - ./etc-pihole:/etc/pihole
+      - ./etc-dnsmasq.d:/etc/dnsmasq.d
+      - /etc/ssl/pihole:/etc/ssl/pihole
