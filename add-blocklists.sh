@@ -10,25 +10,25 @@ BLOCKLISTS=(
 "https://raw.githubusercontent.com/hoshsadiq/adblock-nocoin-list/master/hosts.txt"
 )
 
-echo "🔷 Checking Default group ID…"
+echo "Checking Default group ID…"
 DEFAULT_GID=$(sqlite3 $DB "SELECT id FROM 'group' WHERE name='Default';")
 if [ -z "$DEFAULT_GID" ]; then
-  echo "❌ Could not find Default group. Creating it…"
+  echo "Could not find Default group. Creating it…"
   sqlite3 $DB "INSERT INTO 'group' (name, enabled) VALUES ('Default', 1);"
   DEFAULT_GID=$(sqlite3 $DB "SELECT id FROM 'group' WHERE name='Default';")
 fi
-echo "✅ Default group ID: $DEFAULT_GID"
+echo "Default group ID: $DEFAULT_GID"
 
 for URL in "${BLOCKLISTS[@]}"; do
-  echo "🔷 Processing: $URL"
+  echo "Processing: $URL"
   ADLIST_ID=$(sqlite3 $DB "SELECT id FROM adlist WHERE address='$URL';")
 
   if [ -z "$ADLIST_ID" ]; then
-    echo "➕ Adding blocklist: $URL"
+    echo "Adding blocklist: $URL"
     sqlite3 $DB "INSERT INTO adlist (address, enabled) VALUES ('$URL',1);"
     ADLIST_ID=$(sqlite3 $DB "SELECT id FROM adlist WHERE address='$URL';")
   else
-    echo "✅ Already exists in adlist table."
+    echo "Already exists in adlist table."
   fi
 
   LINKED=$(sqlite3 $DB "SELECT id FROM group_adlist WHERE adlist_id=$ADLIST_ID AND group_id=$DEFAULT_GID;")
@@ -36,11 +36,11 @@ for URL in "${BLOCKLISTS[@]}"; do
     echo "🔗 Linking to Default group."
     sqlite3 $DB "INSERT INTO group_adlist (group_id, adlist_id) VALUES ($DEFAULT_GID, $ADLIST_ID);"
   else
-    echo "✅ Already linked to Default group."
+    echo "Already linked to Default group."
   fi
 done
 
-echo "🔷 Updating Gravity…"
+echo "Updating Gravity…"
 pihole -g
 
-echo "🎉 Done. Check the admin page → Group Management → Adlists."
+echo "Done. Check the admin page → Group Management → Adlists."
